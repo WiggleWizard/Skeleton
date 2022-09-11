@@ -40,7 +40,7 @@ protected:
 
 	void MainLoopExit();
 
-private:
+protected:
 	GLFWwindow* _glfwWindow = nullptr;
 	ea::string _glslVersion = "#version 130";
 	bool _bShowDemoWindow = false;

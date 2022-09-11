@@ -111,10 +111,10 @@ void ApplicationBaseImGui::MainLoop()
 
 void ApplicationBaseImGui::InternalDrawImGui(double deltaTime)
 {
+	DrawImGui(deltaTime);
+
 	if(_bShowDemoWindow)
 		ImGui::ShowDemoWindow(&_bShowDemoWindow);
-
-	DrawImGui(deltaTime);
 }
 
 void ApplicationBaseImGui::DrawImGuiEnd()
