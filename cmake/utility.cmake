@@ -1,26 +1,49 @@
+function(get_dep)
+	cmake_parse_arguments(
+		IN_ARGS
+		""
+		"DEP_NAME"
+		""
+		${ARGN})
+
+	# Attempt to find an include for this dependency, if we don't find one however,
+	# that's ok, we can move on to doing other stuff
+	include("${IN_ARGS_DEP_NAME}" OPTIONAL RESULT_VARIABLE _MODULE_PATH)                                                                                                            
+	if(NOT _MODULE_PATH)
+		message(AUTHOR_WARNING "No cmake dependency include found for ${IN_ARGS_DEP_NAME}. Ignoring")
+	endif()
+endfunction()
+
 function(make_skeleton_module)
 	cmake_parse_arguments(
-		PARSED_ARGS
+		IN_ARGS
 		""
 		"MODULE_NAME"
-		"SOURCES;DEPS"
-		${ARGN}
-	)
+		"SOURCES;HEADERS;DEPS"
+		${ARGN})
 
 	set(MODULE_TYPE "LIB")
 	set(IS_HEADER_ONLY FALSE)
-	if(NOT PARSED_ARGS_SOURCES)
+	if(NOT IN_ARGS_SOURCES)
 		set(IS_HEADER_ONLY TRUE)
-		set(MODULE_TYPE "INTERFACE")
+		set(MODULE_TYPE "HEADER ONLY")
 	endif()
 	
-	message("-- Skeleton module ${PARSED_ARGS_MODULE_NAME} (${MODULE_TYPE}):")
-	message("   - Deps: ${PARSED_ARGS_DEPS}")
+	# Printing some info about each module
+	message(STATUS "Skeleton module ${IN_ARGS_MODULE_NAME} (${MODULE_TYPE})")
+	message("   - Dependancies:")
+	foreach(DEP ${IN_ARGS_DEPS})
+		message("         ${DEP}")
+	endforeach()
 
-	set(MODULE_NAME SkeletonModule${PARSED_ARGS_MODULE_NAME})
-	set(MODULE_ALIAS Skeleton::Module::${PARSED_ARGS_MODULE_NAME})
-	set(MODULE_SOURCES ${PARSED_ARGS_SOURCES})
-	set(MODULE_DEP_LIBS ${PARSED_ARGS_DEPS})
+	foreach(DEP ${IN_ARGS_DEPS})
+		get_dep(DEP_NAME ${DEP})
+	endforeach()
+
+	set(MODULE_NAME SkeletonModule${IN_ARGS_MODULE_NAME})
+	set(MODULE_ALIAS Skeleton::Module::${IN_ARGS_MODULE_NAME})
+	set(MODULE_SOURCES ${IN_ARGS_SOURCES} ${IN_ARGS_HEADERS})
+	set(MODULE_DEP_LIBS ${IN_ARGS_DEPS})
 
 	project(${MODULE_NAME})
 

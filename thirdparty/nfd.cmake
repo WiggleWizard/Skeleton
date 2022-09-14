@@ -1,3 +1,5 @@
+include_guard()
+
 CPMAddPackage(
     NAME nfd
     GITHUB_REPOSITORY btzy/nativefiledialog-extended
